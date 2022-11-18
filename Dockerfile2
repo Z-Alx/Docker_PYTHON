@@ -1,0 +1,15 @@
+FROM python:3.9.7-bullseye
+ENV PYTHONUNBUFFERED 1
+WORKDIR /app
+RUN apt-get update && \
+    apt-get install -y locales && \
+    apt-get install -y python3-dev libldap2-dev libsasl2-dev libssl-dev && \
+    echo ru_RU.UTF-8 UTF-8 >> /etc/locale.gen && \
+    locale-gen
+RUN python3 -m pip install --upgrade pip
+COPY docker/requirements.txt /app/
+RUN pip3 install --no-cache-dir -r requirements.txt
+COPY . /app/
+RUN chmod 774 entrypoint.sh
+ENTRYPOINT ["/app/entrypoint.sh"]
+EXPOSE 8000
